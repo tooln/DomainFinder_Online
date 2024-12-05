@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DomainFinder Online</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #f4f4f4; 
+            color: #333; 
+        }
+        h1 { 
+            text-align: center; 
+            color: #0077cc; 
+        }
+        textarea { 
+            width: 100%; 
+            height: 150px; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            margin-top: 10px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        button { 
+            display: block; 
+            width: 100%; 
+            padding: 10px; 
+            margin: 10px 0; 
+            background-color: #0077cc; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            transition: background-color 0.3s; 
+        }
+        button:hover { 
+            background-color: #005fa3; 
+        }
+        ul { 
+            list-style-type: none; 
+            padding: 0; 
+            margin: 0; 
+        }
+        li { 
+            background-color: white; 
+            margin: 5px 0; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        a { 
+            text-decoration: none; 
+            color: #0077cc; 
+        }
+        a:hover { 
+            text-decoration: underline; 
+        }
+        pre {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+
+<h1>DomainFinder Online Tools</h1>
+<textarea id="inputText" placeholder="Paste your text here..."></textarea>
+<button id="extractButton">Extract Domain From Text</button>
+<button id="copyButton">Copy All Links</button>
+<button id="generateCommandsButton">Generate HOST Commands</button>
+<button id="copyCommandsButton">Copy Commands</button>
+<ul id="domainList"></ul>
+<pre id="commandsList"></pre>
+
+<script>
+    const VALID_TLDS = new Set([
+        'com', 'org', 'net', 'int', 'edu', 'gov', 'mil',
+        'co', 'info', 'biz', 'me', 'name', 'tv', 'cc', 'io', 'ai',
+        'uk', 'us', 'de', 'fr', 'jp', 'ca', 'au', 'ru', 'cn', 'it',
+        'nl', 'es', 'br', 'se', 'no', 'fi', 'ch', 'pl', 'in', 'kr',
+        'mx', 'pt', 'cz', 'hk', 'sg', 'be', 'at', 'ie', 'gr', 'ro',
+        'dk', 'sk', 'hu', 'za', 'cl', 'co.uk', 'net.au', 'com.au',
+        'gov.uk', 'org.uk', 'mobi', 'tel', 'aero', 'jobs', 'museum',
+        'asia', 'cat', 'pro', 'coop', 'info', 'name', 'xxx', 'online',
+        'site', 'shop', 'club', 'space', 'tech', 'me', 'dev', 'app',
+        'store', 'design', 'news', 'earth', 'works', 'love', 'life',
+        'travel', 'events', 'news', 'media', 'blog',
+        'directory', 'info', 'mobi', 'cc', 'website',
+        'guru', 'group', 'place', 'tips', 'today', 'video', 'vote',
+        'zone', 'buzz', 'fans', 'art', 'world', 'design', 'web',
+        'homes', 'rentals', 'construction', 'financial', 'insurance'
+    ]);
+
+    document.getElementById('extractButton').addEventListener('click', function() {
+        const inputText = document.getElementById('inputText').value;
+        const domainRegex = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+)(?=[\/\s]|$)/g;
+        const domains = new Set();
+        let match;
+
+        while ((match = domainRegex.exec(inputText)) !== null) {
+            let domain = match[1].replace(/[^\w.-]+$/, '');
+            const domainParts = domain.split('.');
+
+            if (domainParts.length >= 2) {
+                const lastTLD = domainParts[domainParts.length - 1];
+                const secondLastTLD = domainParts[domainParts.length - 2];
+
+                if (VALID_TLDS.has(lastTLD) || VALID_TLDS.has(secondLastTLD)) {
+                    domain = domainParts.slice(-2).join('.');
+                    domains.add(domain);
+                }
+            }
+        }
+
+        // Display extracted domains
+        const domainList = document.getElementById('domainList');
+        domainList.innerHTML = '';
+        domains.forEach(domain => {
+            const link = `https://www.godaddy.com/en-in/domainsearch/find?domainToCheck=${domain}`;
+            const li = document.createElement('li');
+            li.innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+            domainList.appendChild(li);
+        });
+    });
+
+    document.getElementById('copyButton').addEventListener('click', function() {
+        const domainList = document.getElementById('domainList');
+        const links = Array.from(domainList.getElementsByTagName('li'))
+            .map(li => li.innerText)
+            .join('\n');
+
+        navigator.clipboard.writeText(links).then(() => {
+            console.log('All links copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    });
+
+    document.getElementById('generateCommandsButton').addEventListener('click', function() {
+        const domainList = document.getElementById('domainList');
+        const domains = Array.from(domainList.getElementsByTagName('li'))
+            .map(li => li.innerText.replace('https://www.godaddy.com/en-in/domainsearch/find?domainToCheck=', ''));
+
+        // Generate the host commands with grep "NXDOMAIN"
+        const commandsList = domains.map(domain => `host ${domain} | grep "NXDOMAIN"`).join('\n');
+
+        // Display generated commands
+        const commandsContainer = document.getElementById('commandsList');
+        commandsContainer.textContent = commandsList;
+    });
+
+    document.getElementById('copyCommandsButton').addEventListener('click', function() {
+        const commandsContainer = document.getElementById('commandsList');
+        const commands = commandsContainer.textContent;
+
+        navigator.clipboard.writeText(commands).then(() => {
+            console.log('Commands copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy commands: ', err);
+        });
+    });
+</script>
+
+</body>
+</html>

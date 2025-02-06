@@ -72,7 +72,7 @@
 </head>
 <body>
 
-<h1>DomainFinder Online Tools</h1>
+<h1>DomainFinder Online Version</h1>
 <textarea id="inputText" placeholder="Paste your text here..."></textarea>
 <button id="extractButton">Extract Domain From Text</button>
 <button id="copyButton">Copy All Links</button>
@@ -82,23 +82,39 @@
 <pre id="commandsList"></pre>
 
 <script>
-    const VALID_TLDS = new Set([
-        'com', 'org', 'net', 'int', 'edu', 'gov', 'mil',
-        'co', 'info', 'biz', 'me', 'name', 'tv', 'cc', 'io', 'ai',
-        'uk', 'us', 'de', 'fr', 'jp', 'ca', 'au', 'ru', 'cn', 'it',
-        'nl', 'es', 'br', 'se', 'no', 'fi', 'ch', 'pl', 'in', 'kr',
-        'mx', 'pt', 'cz', 'hk', 'sg', 'be', 'at', 'ie', 'gr', 'ro',
-        'dk', 'sk', 'hu', 'za', 'cl', 'co.uk', 'net.au', 'com.au',
-        'gov.uk', 'org.uk', 'mobi', 'tel', 'aero', 'jobs', 'museum',
-        'asia', 'cat', 'pro', 'coop', 'info', 'name', 'xxx', 'online',
-        'site', 'shop', 'club', 'space', 'tech', 'me', 'dev', 'app',
-        'store', 'design', 'news', 'earth', 'works', 'love', 'life',
-        'travel', 'events', 'news', 'media', 'blog',
-        'directory', 'info', 'mobi', 'cc', 'website',
-        'guru', 'group', 'place', 'tips', 'today', 'video', 'vote',
-        'zone', 'buzz', 'fans', 'art', 'world', 'design', 'web',
-        'homes', 'rentals', 'construction', 'financial', 'insurance'
-    ]);
+const VALID_TLDS = new Set([
+    'com', 'org', 'net', 'int', 'edu', 'gov', 'mil',
+    'co', 'info', 'biz', 'me', 'name', 'tv', 'cc', 'io', 'ai',
+    'uk', 'us', 'de', 'fr', 'jp', 'ca', 'au', 'ru', 'cn', 'it',
+    'nl', 'es', 'br', 'se', 'no', 'fi', 'ch', 'pl', 'in', 'kr',
+    'mx', 'pt', 'cz', 'hk', 'sg', 'be', 'at', 'ie', 'gr', 'ro',
+    'dk', 'sk', 'hu', 'za', 'cl', 'com.uk', 'net.au', 'com.au',
+    'gov.uk', 'org.uk', 'mobi', 'tel', 'aero', 'jobs', 'museum',
+    'asia', 'cat', 'pro', 'coop', 'info', 'name', 'xxx', 'online',
+    'site', 'shop', 'club', 'space', 'tech', 'me', 'dev', 'app',
+    'store', 'design', 'news', 'earth', 'works', 'love', 'life',
+    'travel', 'events', 'news', 'media', 'blog',
+    'directory', 'info', 'mobi', 'cc', 'website',
+    'guru', 'group', 'place', 'tips', 'today', 'video', 'vote',
+    'zone', 'buzz', 'fans', 'art', 'world', 'design', 'web',
+    'homes', 'rentals', 'construction', 'financial', 'insurance',
+    'com.sg', 'org.sg', 'edu.sg', 'net.sg', 'gov.sg', 'co.sg',
+    'com.ca', 'org.ca', 'net.ca', 'edu.ca', 'gov.ca',
+    'com.au', 'org.au', 'net.au', 'edu.au',
+    'co.nz', 'org.nz', 'net.nz', 'edu.nz', 'govt.nz'
+    'co.in', 'org.in', 'net.in', 'edu.in',
+    'co.za', 'org.za', 'net.za', 'gov.za',
+    'co.kr', 'or.kr', 'net.kr', 'edu.kr',
+    'co.jp', 'ne.jp', 'or.jp', 'ac.jp',
+    'com.br', 'org.br', 'net.br', 'edu.br', 'gov.br',
+    'co.il', 'org.il', 'net.il', 'edu.il',
+    'eu', 'eu.org',
+    'fm', 'tv', 'nu', 'ws', 'co.ws',
+    'is', 'se', 'no', 'fi', 'dk', 'pl', 'hu', 'lt', 'lv',
+    'cat', 'pro', 'coop', 'museum', 'jobs', 'aero', 'mobi', 'tel',
+    'co.za', 'gov.za', 'org.za', 'edu.za',
+    'sc', 'com.sc', 'org.sc', 'net.sc'
+]);
 
     document.getElementById('extractButton').addEventListener('click', function() {
         const inputText = document.getElementById('inputText').value;

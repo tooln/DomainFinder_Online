@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text2Domain Extractor</title>
+    <title>DomainHarvester</title>
     <style>
         /* General Reset */
         * {
@@ -165,7 +165,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>TEXT TO Domain Extractor</h1>
+        <h1>TEXT TO Domain Harvester</h1>
         <div class="description">
 <span style="font-family: 'Courier New', monospace; font-size: 1rem; color: #00ff00; background-color: #000; padding: 5px; border-radius: 3px;">
     This is a <span style="color: #00ffff; font-weight: bold;">bug bounty tool</span> designed to <span style="color: #ff00ff;">extract domains</span> from text, <span style="color: #00ffff;">generate links</span> to verify domain availability for purchase, and <span style="color: #ff00ff;">produce commands</span> to identify unregistered domains.
@@ -186,14 +186,65 @@
     </div>
 
     <script>
-        const VALID_TLDS = new Set([
-            'com', 'org', 'net', 'int', 'edu', 'gov', 'mil',
-            'co', 'info', 'biz', 'me', 'name', 'tv', 'cc', 'io', 'ai',
-            'uk', 'us', 'de', 'fr', 'jp', 'ca', 'au', 'ru', 'cn', 'it',
-            'nl', 'es', 'br', 'se', 'no', 'fi', 'ch', 'pl', 'in', 'kr',
-            'mx', 'pt', 'cz', 'hk', 'sg', 'be', 'at', 'ie', 'gr', 'ro'
-        ]);
-
+            const VALID_TLDS = new Set([
+    'com', 'org', 'net', 'int', 'edu', 'gov', 'mil',
+    'co', 'info', 'biz', 'me', 'name', 'tv', 'cc', 'io', 'ai',
+    'uk', 'us', 'de', 'fr', 'jp', 'ca', 'au', 'ru', 'cn', 'it',
+    'nl', 'es', 'br', 'se', 'no', 'fi', 'ch', 'pl', 'in', 'kr',
+    'mx', 'pt', 'cz', 'hk', 'sg', 'be', 'at', 'ie', 'gr', 'ro',
+    'dk', 'sk', 'hu', 'za', 'cl', 'com.uk', 'net.au', 'com.au',
+    'gov.uk', 'org.uk', 'mobi', 'tel', 'aero', 'jobs', 'museum',
+    'asia', 'cat', 'pro', 'coop', 'info', 'name', 'xxx', 'online',
+    'site', 'shop', 'club', 'space', 'tech', 'me', 'dev', 'app',
+    'store', 'design', 'news', 'earth', 'works', 'love', 'life',
+    'travel', 'events', 'news', 'media', 'blog',
+    'directory', 'info', 'mobi', 'cc', 'website',
+    'guru', 'group', 'place', 'tips', 'today', 'video', 'vote',
+    'zone', 'buzz', 'fans', 'art', 'world', 'design', 'web',
+    'homes', 'rentals', 'construction', 'financial', 'insurance',
+    'com.sg', 'org.sg', 'edu.sg', 'net.sg', 'gov.sg', 'co.sg',
+    'com.ca', 'org.ca', 'net.ca', 'edu.ca', 'gov.ca',
+    'com.au', 'org.au', 'net.au', 'edu.au',
+    'co.nz', 'org.nz', 'net.nz', 'edu.nz', 'govt.nz',
+    'co.in', 'org.in', 'net.in', 'edu.in',
+    'co.za', 'org.za', 'net.za', 'gov.za',
+    'co.kr', 'or.kr', 'net.kr', 'edu.kr',
+    'co.jp', 'ne.jp', 'or.jp', 'ac.jp',
+    'com.br', 'org.br', 'net.br', 'edu.br', 'gov.br',
+    'co.il', 'org.il', 'net.il', 'edu.il',
+    'eu', 'eu.org',
+    'fm', 'tv', 'nu', 'ws', 'co.ws',
+    'is', 'se', 'no', 'fi', 'dk', 'pl', 'hu', 'lt', 'lv',
+    'cat', 'pro', 'coop', 'museum', 'jobs', 'aero', 'mobi', 'tel',
+    'co.za', 'gov.za', 'org.za', 'edu.za',
+    'sc', 'com.sc', 'org.sc', 'net.sc',
+    'com.net', 'com.co', 'net.co', 'org.co',
+    'co.uk', 'org.uk', 'com.au', 'net.au', 'org.au', 'gov.uk',
+    'com.ie', 'org.ie', 'gov.ie', 'net.ie',
+    'co.in', 'com.in', 'org.in', 'net.in', 'gov.in',
+    'com.pk', 'org.pk', 'net.pk', 'edu.pk',
+    'com.ca', 'org.ca', 'net.ca', 'edu.ca',
+    'com.us', 'org.us', 'net.us',
+    'com.sg', 'org.sg', 'gov.sg', 'edu.sg',
+    'co.sg', 'com.mx', 'org.mx', 'net.mx',
+    'co.br', 'com.br', 'org.br', 'net.br', 'gov.br',
+    'com.co', 'net.co', 'org.co',
+    'co.co', 'com.co', 'net.co',
+    'com.hk', 'org.hk', 'net.hk',
+    'com.tw', 'org.tw', 'net.tw',
+    'co.za', 'com.za', 'org.za', 'net.za', 'gov.za',
+    'com.ar', 'net.ar', 'org.ar', 'edu.ar',
+    'com.ru', 'org.ru', 'net.ru', 'edu.ru',
+    'co.kr', 'com.kr', 'net.kr', 'org.kr', 'edu.kr',
+    'co.jp', 'com.jp', 'org.jp', 'net.jp', 'edu.jp',
+    'com.uk', 'org.uk', 'net.uk',
+    'com.au', 'org.au', 'net.au', 'gov.au',
+    'com.il', 'org.il', 'net.il',
+    'com.co.uk', 'org.co.uk', 'net.co.uk', 'gov.co.uk', 'ac.uk',
+    'com.uy', 'org.uy', 'net.uy', 'edu.uy',
+    'com.pe', 'org.pe', 'net.pe', 'edu.pe',
+    'com.cl', 'org.cl', 'net.cl', 'edu.cl'
+]);
         document.getElementById('extractButton').addEventListener('click', function() {
             const inputText = document.getElementById('inputText').value;
             const domainRegex = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+)(?=[\/\s;,]|$)/g;

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text2Domain Extractor</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #2c3e50);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #00ffcc;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+
+        .description {
+            text-align: center;
+            color: #ccc;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #00ffcc;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 12px;
+            background: linear-gradient(135deg, #00ffcc, #00b3b3);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        li {
+            background: rgba(0, 0, 0, 0.5);
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 255, 204, 0.3);
+        }
+
+        a {
+            text-decoration: none;
+            color: #00ffcc;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #00b3b3;
+        }
+
+        pre {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            margin: 20px 0;
+            color: #00ffcc;
+        }
+
+        .footer {
+            text-align: center;
+            color: #ccc;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TEXT TO Domain Extractor</h1>
+        <div class="description">
+<span style="font-family: 'Courier New', monospace; font-size: 1rem; color: #00ff00; background-color: #000; padding: 5px; border-radius: 3px;">
+    This is a <span style="color: #00ffff; font-weight: bold;">bug bounty tool</span> designed to <span style="color: #ff00ff;">extract domains</span> from text, <span style="color: #00ffff;">generate links</span> to verify domain availability for purchase, and <span style="color: #ff00ff;">produce commands</span> to identify unregistered domains.
+</span>
+        </div>
+        <textarea id="inputText" placeholder="Paste your text here..."></textarea>
+        <div class="button-group">
+            <button id="extractButton">Extract Domain</button>
+            <button id="copyButton">Copy All Links</button>
+            <button id="generateCommandsButton">HOST Command</button>
+            <button id="copyCommandsButton">Copy Command</button>
+        </div>
+        <ul id="domainList"></ul>
+        <pre id="commandsList"></pre>
+        <div class="footer">
+            Powered by Professor Software Solutions
+        </div>
+    </div>
+
+    <script>
+        const VALID_TLDS = new Set([
+            'com', 'org', 'net', 'int', 'edu', 'gov', 'mil',
+            'co', 'info', 'biz', 'me', 'name', 'tv', 'cc', 'io', 'ai',
+            'uk', 'us', 'de', 'fr', 'jp', 'ca', 'au', 'ru', 'cn', 'it',
+            'nl', 'es', 'br', 'se', 'no', 'fi', 'ch', 'pl', 'in', 'kr',
+            'mx', 'pt', 'cz', 'hk', 'sg', 'be', 'at', 'ie', 'gr', 'ro'
+        ]);
+
+        document.getElementById('extractButton').addEventListener('click', function() {
+            const inputText = document.getElementById('inputText').value;
+            const domainRegex = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+)(?=[\/\s;,]|$)/g;
+            const domains = new Set();
+            let match;
+
+            while ((match = domainRegex.exec(inputText)) !== null) {
+                let domain = match[1].replace(/[^\w.-]+$/, '');
+                const domainParts = domain.split('.');
+
+                if (domainParts.length >= 2) {
+                    const lastTLD = domainParts[domainParts.length - 1];
+                    const secondLastTLD = domainParts[domainParts.length - 2];
+
+                    if (VALID_TLDS.has(lastTLD) || VALID_TLDS.has(secondLastTLD)) {
+                        domain = domainParts.slice(-2).join('.');
+                        domains.add(domain);
+                    }
+                }
+            }
+
+            // Display extracted domains
+            const domainList = document.getElementById('domainList');
+            domainList.innerHTML = '';
+            domains.forEach(domain => {
+                const link = `https://onlydomains.com/domain/frontSearch?domain=${domain}`;
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+                domainList.appendChild(li);
+            });
+        });
+
+        document.getElementById('copyButton').addEventListener('click', function() {
+            const domainList = document.getElementById('domainList');
+            const links = Array.from(domainList.getElementsByTagName('li'))
+                .map(li => li.innerText)
+                .join('\n');
+
+            navigator.clipboard.writeText(links).then(() => {
+                console.log('All links copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        });
+
+        document.getElementById('generateCommandsButton').addEventListener('click', function() {
+            const domainList = document.getElementById('domainList');
+            const domains = Array.from(domainList.getElementsByTagName('li'))
+                .map(li => li.innerText.replace('https://onlydomains.com/domain/frontSearch?domain=', ''));
+
+            // Generate the host commands with grep "NXDOMAIN"
+            const commandsList = domains.map(domain => `host ${domain} | grep -q "NXDOMAIN" && echo "[Vulnerable] Click Here: http://onlydomains.com/domain/frontSearch?domain=${domain}"`).join('\n');
+
+            // Display generated commands
+            const commandsContainer = document.getElementById('commandsList');
+            commandsContainer.textContent = commandsList;
+        });
+
+        document.getElementById('copyCommandsButton').addEventListener('click', function() {
+            const commandsContainer = document.getElementById('commandsList');
+            const commands = commandsContainer.textContent;
+
+            navigator.clipboard.writeText(commands).then(() => {
+                alert('Commands copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy commands: ', err);
+            });
+        });
+    </script>
+</body>
+</html>

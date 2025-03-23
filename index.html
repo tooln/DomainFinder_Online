@@ -308,7 +308,7 @@
             const commands = commandsContainer.textContent;
 
             navigator.clipboard.writeText(commands).then(() => {
-                alert('Commands copied to clipboard!');
+                console.log('Commands copied to clipboard!');
             }).catch(err => {
                 console.error('Failed to copy commands: ', err);
             });
